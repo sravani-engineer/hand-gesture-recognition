@@ -1,4 +1,8 @@
-# 🖐️ Robust Hand Gesture Recognition under Real-World Conditions
+# 🖐️ Evaluating Hand Gesture Recognition Robustness Under Real-World Conditions
+
+> A robustness-focused hand gesture recognition system evaluated under real-world domain shifts using session-based validation.
+
+---
 
 ## 🎥 Demo
 
@@ -10,9 +14,11 @@
 
 ## 📌 Overview
 
-A production-focused hand gesture recognition system designed to evaluate performance under real-world domain shifts such as lighting, background, and distance variations.
+🚨 Unlike most hand gesture recognition projects that rely on random train-test splits, this system uses **session-based evaluation to simulate real-world deployment conditions**.
 
-Unlike typical gesture projects, this system emphasizes **generalization, robustness, and failure analysis** rather than just high accuracy.
+The model is explicitly tested under **domain shifts** such as lighting variation, background clutter, distance, and user differences.
+
+This project focuses on **robustness, generalization, and failure analysis**, not just high accuracy.
 
 ---
 
@@ -20,32 +26,48 @@ Unlike typical gesture projects, this system emphasizes **generalization, robust
 
 Most gesture recognition systems perform well in controlled environments but fail under:
 
-* Different lighting conditions
-* Background variations
-* Distance changes
+- Different lighting conditions  
+- Background variations  
+- Distance changes  
+- Different users and hand variations  
 
-This project evaluates how well a model performs under these real-world challenges.
+👉 This project evaluates how well a model performs under these real-world challenges.
 
 ---
 
 ## 🚀 Solution
 
-* Extracted **21 hand landmarks** using MediaPipe
-* Applied normalization for scale invariance
-* Trained a **Random Forest classifier**
-* Used **session-based split** to simulate real-world deployment
-* Evaluated robustness across multiple conditions
+- Extracted **21 hand landmarks** using MediaPipe  
+- Applied normalization for scale invariance  
+- Trained a **Random Forest classifier**  
+- Designed a **session-based evaluation strategy**  
+- Measured performance under different real-world conditions  
+
+---
+
+## 📦 Dataset Details
+
+- Total samples: **22,255**  
+- Total sessions: **12**  
+
+Data collected across:
+- Multiple users  
+- Different lighting conditions  
+- Various backgrounds  
+- Different camera qualities  
+
+Each session represents a **distinct real-world scenario** used for evaluation.
 
 ---
 
 ## 🛠 Tech Stack
 
-* Python
-* OpenCV
-* MediaPipe
-* Scikit-learn
-* NumPy, Pandas
-* Matplotlib, Seaborn
+- Python  
+- OpenCV  
+- MediaPipe  
+- Scikit-learn  
+- NumPy, Pandas  
+- Matplotlib, Seaborn  
 
 ---
 
@@ -53,17 +75,37 @@ This project evaluates how well a model performs under these real-world challeng
 
 ### Overall Performance
 
-* Accuracy: **~93–94%**
+- Accuracy: **~93–94%**
+
+---
 
 ### Robustness Evaluation
 
-| Condition              | Accuracy |
-| ---------------------- | -------- |
-| Controlled Environment | 1.00     |
-| Moderate Variation     | 0.99     |
-| Challenging Conditions | 0.88     |
+| Condition | Description | Accuracy |
+|----------|------------|---------|
+| Controlled Environment | Uniform background, consistent lighting, single user | 1.0000 |
+| Moderate Variation | Slight lighting changes, simple background variations | 0.9999 |
+| Challenging Conditions | Low light, cluttered background, multiple users, varying distances, low-quality webcam | 0.8842 |
 
-### 📉 Confusion Matrix
+🔥 **Key Result:** Accuracy drops from **1.0000 → 0.8842** under challenging real-world conditions.
+
+📉 **Key Insight:**  
+Model performance decreases by ~12% under real-world variations, demonstrating the impact of **domain shift** on gesture recognition systems.
+
+📌 **Note:**  
+Near-perfect accuracy in controlled environments is expected due to limited variation. This highlights the gap between controlled and real-world performance.
+
+---
+
+### 📊 Summary Statistics
+
+- Minimum Accuracy: **0.8842**  
+- Maximum Accuracy: **1.0000**  
+- Average Accuracy: **0.9614**
+
+---
+
+## 📉 Confusion Matrix
 
 <p align="center">
   <img src="results/confusion_matrix.png" width="500"/>
@@ -73,44 +115,50 @@ This project evaluates how well a model performs under these real-world challeng
 
 ## ⚠️ Failure Analysis
 
-* Confusion between **open** and **four** gestures due to similar finger patterns
-* Performance drops in challenging conditions (~88%) due to:
-
-  * Reduced landmark stability in low lighting
-  * Lower resolution impact at far distances
-* Model sensitive to **partial occlusions**
+- Confusion between **open** and **four** gestures due to similar finger patterns  
+- Performance drops in challenging conditions (~88%) due to:
+  - Reduced landmark stability in low lighting  
+  - Lower resolution impact at far distances  
+- Model sensitive to **partial occlusions**  
 
 ---
 
 ## 🧪 Evaluation Strategy
 
-* Used **session-based split** instead of random split (prevents data leakage)
-* Each session represents different real-world conditions
-* Performed **condition-wise evaluation**
-* Metrics used: Accuracy, Confusion Matrix
+🚨 **Key Design Choice: Session-Based Split**
+
+This project avoids common data leakage issues by using **session-based splitting instead of random splitting**.
+
+- Ensures model is tested on **unseen environments**  
+- Captures **domain shift across conditions**  
+- Simulates real-world deployment scenarios  
+
+Additional details:
+- Condition-wise evaluation performed  
+- Metrics used: Accuracy, Confusion Matrix  
 
 ---
 
 ## 🧠 Key Learnings
 
-* Generalization > raw accuracy
-* Landmark normalization improves performance
-* Distance and background affect prediction stability
-* Real-world ML systems must be evaluated beyond standard train-test splits
+- Generalization > raw accuracy  
+- Landmark normalization improves performance  
+- Distance and background affect prediction stability  
+- Real-world ML systems must be evaluated beyond standard train-test splits  
 
 ---
 
 ## 💼 Why This Matters
 
-This project simulates real-world ML deployment challenges where models must handle distribution shifts.
+This project simulates real-world ML deployment challenges where models must handle **distribution shifts**.
 
 It demonstrates:
 
-* Handling **domain shift**
-* Avoiding **data leakage**
-* Performing **failure analysis**
+- Handling **domain shift**  
+- Avoiding **data leakage**  
+- Performing **failure analysis**  
 
-These are critical for production ML systems.
+👉 These are critical for production-level ML systems.
 
 ---
 
@@ -172,4 +220,3 @@ python src/realtime_inference.py
 ## 🔄 Pipeline
 
 Video Input → Landmark Extraction → Preprocessing → Model Training → Evaluation → Real-time Inference
-
