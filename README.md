@@ -1,6 +1,17 @@
-# 🖐️ Evaluating Hand Gesture Recognition Robustness Under Real-World Conditions
+# 🖐️ Hand Gesture Recognition with Cross-Condition Robustness Evaluation
 
-> A robustness-focused hand gesture recognition system evaluated under real-world domain shifts using session-based validation.
+> A hand gesture recognition system explicitly evaluated under real-world domain shifts using session-based validation.
+
+---
+
+## 🚀 Key Highlights
+
+- 📊 Evaluated across **12 sessions, 5 users, and ~22,000 frames**
+- 🔬 Uses **session-based splitting** to simulate real-world deployment
+- ⚠️ Demonstrates **performance drop under domain shift (100% → 88%)**
+- 📉 Includes **confusion matrix and failure analysis**
+- 🧪 Explicitly avoids **data leakage using session-based validation**
+- 🎯 Focused on **robustness, not just accuracy**
 
 ---
 
@@ -14,7 +25,7 @@
 
 ## 📌 Overview
 
-🚨 Unlike most hand gesture recognition projects that rely on random train-test splits, this system uses **session-based evaluation to simulate real-world deployment conditions**.
+🚨 Unlike typical gesture recognition projects that rely on random train-test splits, this system uses **session-based evaluation** to simulate real-world deployment conditions.
 
 The model is explicitly tested under **domain shifts** such as lighting variation, background clutter, distance, and user differences.
 
@@ -45,39 +56,58 @@ Most gesture recognition systems perform well in controlled environments but fai
 
 ---
 
-## 📦 Dataset Details
+## 📦 Dataset Design
 
-- Total samples: **22,255**  
-- Total sessions: **12**  
+- Total Sessions: **12**
+- Users: **5 individuals**
+- Gestures: **5 static classes (fist, open, index, four, small)**
+- Total Samples: **~22,000 frames**
 
-Data collected across:
-- Multiple users  
-- Different lighting conditions  
-- Various backgrounds  
-- Different camera qualities  
+### Data Collection Strategy
 
-Each session represents a **distinct real-world scenario** used for evaluation.
+The dataset was intentionally collected across multiple sessions to introduce real-world variability:
+
+- Backgrounds: plain and cluttered indoor environments  
+- Lighting Conditions: bright, dim, and natural light  
+- User Variation: different hand shapes and sizes  
+- Pose Variation: changes in hand position, orientation, and distance  
+
+### Objective
+
+The dataset is designed to evaluate gesture recognition performance under **real-world conditions**, rather than controlled environments.
 
 ---
 
-## 🛠 Tech Stack
+## 📊 Dataset Strengths & Limitations
 
-- Python  
-- OpenCV  
-- MediaPipe  
-- Scikit-learn  
-- NumPy, Pandas  
-- Matplotlib, Seaborn  
+### Strengths
+- Multi-user dataset improves **potential for generalization across users**  
+- Environmental diversity (lighting + background)  
+- Large sample size (~22K frames)  
+
+### Limitations
+- Limited to static gestures  
+- No temporal modeling of dynamic gestures  
+
+---
+
+## 🧪 Evaluation Strategy (Key Design)
+
+🚨 Instead of random train-test splits, this project uses **session-based splitting**:
+
+- Train and test data come from **different sessions**
+- Prevents **data leakage**
+- Simulates **real-world deployment scenarios**
+- Captures **domain shift across environments**
+
+This ensures performance reflects **true generalization**, not memorization.
 
 ---
 
 ## 📊 Results
 
 ### Overall Performance
-
-- Accuracy: **~93–94%**
-
----
+- Overall Accuracy: **~93–94%**
 
 ### Robustness Evaluation
 
@@ -85,23 +115,23 @@ Each session represents a **distinct real-world scenario** used for evaluation.
 |----------|------------|---------|
 | Controlled Environment | Uniform background, consistent lighting, single user | 1.0000 |
 | Moderate Variation | Slight lighting changes, simple background variations | 0.9999 |
-| Challenging Conditions | Low light, cluttered background, multiple users, varying distances, low-quality webcam | 0.8842 |
+| Challenging Conditions | Low light, cluttered background, multiple users, varying distances | 0.8842 |
 
-🔥 **Key Result:** Accuracy drops from **1.0000 → 0.8842** under challenging real-world conditions.
+📉 **Performance Drop:** ~12% under real-world conditions
 
-📉 **Key Insight:**  
-Model performance decreases by ~12% under real-world variations, demonstrating the impact of **domain shift** on gesture recognition systems.
-
-📌 **Note:**  
-Near-perfect accuracy in controlled environments is expected due to limited variation. This highlights the gap between controlled and real-world performance.
-
----
-
-### 📊 Summary Statistics
-
+### Summary Statistics
 - Minimum Accuracy: **0.8842**  
 - Maximum Accuracy: **1.0000**  
 - Average Accuracy: **0.9614**
+
+---
+
+## 🧠 Key Insights
+
+- Session-based evaluation reveals performance gaps hidden by random splits  
+- Landmark-based features are sensitive to lighting and distance variations  
+- Similar gestures (open vs four) lead to misclassification due to feature similarity  
+- Model generalizes across users but degrades under challenging conditions  
 
 ---
 
@@ -115,36 +145,10 @@ Near-perfect accuracy in controlled environments is expected due to limited vari
 
 ## ⚠️ Failure Analysis
 
-- Confusion between **open** and **four** gestures due to similar finger patterns  
-- Performance drops in challenging conditions (~88%) due to:
-  - Reduced landmark stability in low lighting  
-  - Lower resolution impact at far distances  
-- Model sensitive to **partial occlusions**  
-
----
-
-## 🧪 Evaluation Strategy
-
-🚨 **Key Design Choice: Session-Based Split**
-
-This project avoids common data leakage issues by using **session-based splitting instead of random splitting**.
-
-- Ensures model is tested on **unseen environments**  
-- Captures **domain shift across conditions**  
-- Simulates real-world deployment scenarios  
-
-Additional details:
-- Condition-wise evaluation performed  
-- Metrics used: Accuracy, Confusion Matrix  
-
----
-
-## 🧠 Key Learnings
-
-- Generalization > raw accuracy  
-- Landmark normalization improves performance  
-- Distance and background affect prediction stability  
-- Real-world ML systems must be evaluated beyond standard train-test splits  
+- Confusion between **open** and **four** due to similar finger configurations  
+- Reduced landmark stability in **low lighting conditions**  
+- Performance degradation when hand occupies **smaller region of frame**  
+- Sensitivity to **partial occlusions and motion blur**  
 
 ---
 
@@ -163,27 +167,24 @@ It demonstrates:
 ---
 
 ## 📂 Project Structure
-
-```
 robust-hand-gesture-recognition/
 │
 ├── src/
-│   ├── extract_landmarks.py
-│   ├── preprocess.py
-│   ├── train_model.py
-│   ├── evaluate.py
-│   ├── evaluate_conditions.py
-│   ├── realtime_inference.py
-│   └── test_hand_detection.py
+│ ├── extract_landmarks.py
+│ ├── preprocess.py
+│ ├── train_model.py
+│ ├── evaluate.py
+│ ├── evaluate_conditions.py
+│ ├── realtime_inference.py
+│ └── test_hand_detection.py
 │
 ├── results/
-│   ├── demo.gif
-│   └── confusion_matrix.png
+│ ├── demo.gif
+│ └── confusion_matrix.png
 │
 ├── requirements.txt
 ├── README.md
 └── .gitignore
-```
 
 ---
 
@@ -194,29 +195,17 @@ robust-hand-gesture-recognition/
 ```bash
 git clone https://github.com/sravani-engineer/robust-hand-gesture-recognition.git
 cd robust-hand-gesture-recognition
-```
-
 ### 2. Create virtual environment
-
-```bash
 python -m venv venv
 venv\Scripts\activate
-```
-
 ### 3. Install dependencies
-
-```bash
 pip install -r requirements.txt
-```
-
 ### 4. Run real-time inference
-
-```bash
 python src/realtime_inference.py
-```
 
----
-
-## 🔄 Pipeline
+🔄 Pipeline
 
 Video Input → Landmark Extraction → Preprocessing → Model Training → Evaluation → Real-time Inference
+
+
+---
