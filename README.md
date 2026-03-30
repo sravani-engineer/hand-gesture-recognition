@@ -23,6 +23,38 @@
 
 ---
 
+## 🌐 Live Demo (Streamlit App)
+
+🚀 An interactive web application is available to test the model in real time.
+
+👉 **Live App:** https://your-app-name.streamlit.app  
+
+### 🖥️ Features
+- Real-time gesture prediction from uploaded videos  
+- Confidence score for each prediction  
+- Temporal smoothing for stable predictions  
+- Visual hand landmark detection using MediaPipe  
+- Displays processing statistics (frame count, detection rate)  
+
+### 🎯 What You Can Test
+- Different lighting conditions  
+- Background variations  
+- Distance from camera  
+- Gesture stability across frames  
+
+### ⚠️ Known Limitations
+- Reduced accuracy in low lighting  
+- Confusion between similar gestures (open vs four)  
+- Sensitive to hand distance and visibility  
+
+💡 This app demonstrates how the model behaves under **real-world conditions**, not just controlled environments.
+
+<p align="center">
+  <img src="results/streamlit_ui.png" width="700"/>
+</p>
+
+---
+
 ## 📌 Overview
 
 🚨 Unlike typical gesture recognition projects that rely on random train-test splits, this system uses **session-based evaluation** to simulate real-world deployment conditions.
@@ -169,6 +201,10 @@ It demonstrates:
 ## 📂 Project Structure
 robust-hand-gesture-recognition/
 │
+├── streamlit_app.py
+├── models/
+│ └── gesture_model.pkl
+│
 ├── src/
 │ ├── extract_landmarks.py
 │ ├── preprocess.py
@@ -180,7 +216,8 @@ robust-hand-gesture-recognition/
 │
 ├── results/
 │ ├── demo.gif
-│ └── confusion_matrix.png
+│ ├── confusion_matrix.png
+│ └── streamlit_ui.png
 │
 ├── requirements.txt
 ├── README.md
@@ -200,8 +237,8 @@ python -m venv venv
 venv\Scripts\activate
 ### 3. Install dependencies
 pip install -r requirements.txt
-### 4. Run real-time inference
-python src/realtime_inference.py
+### 4. Run Streamlit App
+streamlit run streamlit_app.py
 
 🔄 Pipeline
 
