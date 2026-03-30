@@ -11,17 +11,56 @@ from collections import Counter, deque
 # -----------------------------
 st.set_page_config(page_title="Gesture Recognition", layout="centered")
 
-st.title("🖐 Hand Gesture Recognition System")
-st.caption("Robust gesture recognition evaluated under real-world variations")
+# -----------------------------
+# Header (Dashboard Style)
+# -----------------------------
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.title("🖐 Hand Gesture Recognition")
+    st.subheader("Real-Time Robust Gesture Detection")
+
+with col2:
+    st.metric("Model", "Random Forest")
+    st.metric("Dataset", "22K Frames")
+
+st.markdown("---")
 
 # -----------------------------
-# Supported Gestures
+# Highlight Robustness
 # -----------------------------
-st.markdown("## 🎮 Supported Gestures")
-st.write("✊ Fist | ✋ Open Palm | ☝ Index | 🖖 Four Fingers (thumb down) | 🤘 Small (thumb & pinky up, middle 3 down)")
+st.info("⚠️ This model is tested under real-world variations: lighting, background, and user differences.")
 
-st.info("Model trained on multi-user, multi-condition dataset (~22K frames)")
-st.markdown("💡 Tip: Upload videos with different lighting or backgrounds to test robustness")
+# -----------------------------
+# Sidebar
+# -----------------------------
+st.sidebar.title("📌 About")
+st.sidebar.write("""
+- 22K frames dataset  
+- 12 sessions  
+- 5 users  
+- Tested under domain shift  
+""")
+
+st.sidebar.warning("""
+⚠️ Limitations:
+- Low light reduces accuracy  
+- Confusion: open vs four  
+- Sensitive to distance  
+""")
+
+# -----------------------------
+# Instructions
+# -----------------------------
+st.markdown("## 🎮 Instructions")
+st.info("""
+1. Upload a gesture video  
+2. Ensure hand is clearly visible  
+3. Try different lighting conditions  
+4. Test different backgrounds  
+""")
+
+st.markdown("---")
 
 # -----------------------------
 # Load Model
@@ -31,7 +70,7 @@ MODEL_PATH = "models/gesture_model.pkl"
 try:
     model = joblib.load(MODEL_PATH)
 except:
-    st.error("❌ Model not found! Check models/gesture_model.pkl")
+    st.error("❌ Model not found!")
     st.stop()
 
 # -----------------------------
@@ -61,12 +100,9 @@ def extract_features(landmarks):
     return landmarks.flatten().reshape(1, -1)
 
 # -----------------------------
-# Upload Video
+# Upload
 # -----------------------------
-uploaded_file = st.file_uploader(
-    "📤 Upload a gesture video",
-    type=["mp4", "avi", "mov"]
-)
+uploaded_file = st.file_uploader("📤 Upload Gesture Video", type=["mp4", "avi", "mov"])
 
 if uploaded_file is not None:
 
@@ -79,13 +115,19 @@ if uploaded_file is not None:
         st.error("❌ Cannot open video")
         st.stop()
 
+    # -----------------------------
+    # System Status
+    # -----------------------------
+    st.markdown("---")
+    st.markdown("### ⚙️ System Status")
+    st.write("Processing frames and detecting hand landmarks...")
+
     stframe = st.empty()
-    status_text = st.empty()
     progress = st.progress(0)
 
     gesture_counter = Counter()
     confidence_list = []
-    window = deque(maxlen=5)
+    window = deque(maxlen=10)
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     if total_frames <= 0:
@@ -94,7 +136,14 @@ if uploaded_file is not None:
     frame_count = 0
     detected_frames = 0
 
-    st.info("Processing video...")
+    # -----------------------------
+    # Live Prediction (Hero Section)
+    # -----------------------------
+    st.markdown("---")
+    st.markdown("## 🎯 Live Prediction")
+    st.caption("Real-time prediction with temporal smoothing")
+
+    prediction_box = st.empty()
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -128,25 +177,27 @@ if uploaded_file is not None:
                 else:
                     confidence = None
 
-                final_pred = Counter(window).most_common(1)[0][0]
+                stable_pred = Counter(window).most_common(1)[0][0]
 
             except:
-                final_pred = "Error"
+                stable_pred = "Error"
                 confidence = None
 
-            gesture_counter[final_pred] += 1
+            gesture_counter[stable_pred] += 1
 
-            # Live prediction display
+            # -----------------------------
+            # HERO OUTPUT (FINAL POLISH)
+            # -----------------------------
+            prediction_box.markdown(f"# 🖐 {stable_pred}")
+
             if confidence is not None:
-                status_text.markdown(
-                    f"### 🧠 Prediction: **{final_pred}** ({round(confidence*100,2)}%)"
-                )
-            else:
-                status_text.markdown(f"### 🧠 Prediction: **{final_pred}**")
+                st.metric("Confidence", f"{round(confidence*100,2)}%")
+
+            st.caption("Stable prediction across last 10 frames")
 
             cv2.putText(
                 frame,
-                final_pred,
+                stable_pred,
                 (10, 40),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1,
@@ -155,13 +206,14 @@ if uploaded_file is not None:
             )
 
         else:
-            status_text.markdown("### ❌ No Hand Detected")
+            prediction_box.markdown("## ❌ No Hand Detected")
 
         stframe.image(frame, channels="BGR")
         progress.progress(min(frame_count / total_frames, 1.0))
 
     cap.release()
 
+    st.markdown("---")
     st.success("✅ Processing complete")
 
     # -----------------------------
@@ -171,20 +223,19 @@ if uploaded_file is not None:
 
     if gesture_counter:
         final_gesture = max(gesture_counter, key=gesture_counter.get)
-        st.success(f"Predicted Gesture: {final_gesture}")
+        st.markdown(f"## 🏁 Final Prediction: {final_gesture}")
 
         if confidence_list:
             avg_conf = np.mean(confidence_list)
-            st.write(f"Confidence: {round(avg_conf*100,2)}%")
-
-        st.caption("Prediction based on majority voting across frames for stability.")
+            st.write(f"Average Confidence: {round(avg_conf*100,2)}%")
 
     else:
-        st.error("❌ No valid gesture detected")
+        st.error("❌ No gesture detected")
 
     # -----------------------------
-    # Processing Details (renamed)
+    # Processing Details
     # -----------------------------
+    st.markdown("---")
     st.markdown("## 📊 Processing Details")
 
     st.write(f"Total Frames: {frame_count}")
@@ -197,6 +248,7 @@ if uploaded_file is not None:
     # -----------------------------
     # Prediction Summary
     # -----------------------------
+    st.markdown("---")
     st.markdown("## 📊 Prediction Summary")
 
     for g, count in gesture_counter.items():
