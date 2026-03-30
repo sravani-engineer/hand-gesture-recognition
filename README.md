@@ -201,6 +201,9 @@ It demonstrates:
 ## 📂 Project Structure
 robust-hand-gesture-recognition/
 │
+├── .streamlit/
+│   └── config.toml  
+│
 ├── streamlit_app.py
 ├── models/
 │ └── gesture_model.pkl
