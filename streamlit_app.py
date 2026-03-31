@@ -1,10 +1,19 @@
 import streamlit as st
 import cv2
-import mediapipe as mp
 import joblib
 import numpy as np
 import tempfile
 from collections import Counter, deque
+
+# -----------------------------
+# SAFE IMPORT (CRITICAL FIX)
+# -----------------------------
+try:
+    import mediapipe as mp
+    mp_hands = mp.solutions.hands
+    USE_MEDIAPIPE = True
+except:
+    USE_MEDIAPIPE = False
 
 # -----------------------------
 # Page Config
@@ -12,7 +21,7 @@ from collections import Counter, deque
 st.set_page_config(page_title="Gesture Recognition", layout="centered")
 
 # -----------------------------
-# Header (Dashboard Style)
+# Header
 # -----------------------------
 col1, col2 = st.columns([2, 1])
 
@@ -27,7 +36,21 @@ with col2:
 st.markdown("---")
 
 # -----------------------------
-# Highlight Robustness
+# Cloud Warning (IMPORTANT)
+# -----------------------------
+if not USE_MEDIAPIPE:
+    st.warning("""
+⚠️ Live hand detection is disabled in this cloud deployment.
+
+Reason:
+MediaPipe is not supported in this environment (Python 3.14).
+
+👉 To test full real-time gesture detection:
+Run this app locally.
+""")
+
+# -----------------------------
+# Robustness Highlight
 # -----------------------------
 st.info("⚠️ This model is tested under real-world variations: lighting, background, and user differences.")
 
@@ -63,7 +86,17 @@ st.info("""
 st.markdown("---")
 
 # -----------------------------
-# Load Model
+# System Design (BIG BOOST)
+# -----------------------------
+st.markdown("## 🧠 System Design")
+st.code("""
+Video → MediaPipe → Landmarks → Model → Prediction
+""")
+
+st.markdown("---")
+
+# -----------------------------
+# Load Model (MUST WORK)
 # -----------------------------
 MODEL_PATH = "models/gesture_model.pkl"
 
@@ -74,182 +107,131 @@ except:
     st.stop()
 
 # -----------------------------
-# MediaPipe Setup
-# -----------------------------
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(
-    max_num_hands=1,
-    min_detection_confidence=0.7,
-    min_tracking_confidence=0.6
-)
-mp_draw = mp.solutions.drawing_utils
-
-# -----------------------------
-# Feature Extraction
-# -----------------------------
-def extract_features(landmarks):
-    landmarks = np.array(landmarks)
-
-    base = landmarks[0]
-    landmarks = landmarks - base
-
-    max_val = np.max(np.abs(landmarks))
-    if max_val != 0:
-        landmarks = landmarks / max_val
-
-    return landmarks.flatten().reshape(1, -1)
-
-# -----------------------------
 # Upload
 # -----------------------------
 uploaded_file = st.file_uploader("📤 Upload Gesture Video", type=["mp4", "avi", "mov"])
 
+# ============================================================
+# FULL PIPELINE (ONLY IF MEDIAPIPE AVAILABLE)
+# ============================================================
 if uploaded_file is not None:
 
-    tfile = tempfile.NamedTemporaryFile(delete=False)
-    tfile.write(uploaded_file.read())
+    if USE_MEDIAPIPE:
 
-    cap = cv2.VideoCapture(tfile.name)
+        hands = mp_hands.Hands(
+            max_num_hands=1,
+            min_detection_confidence=0.7,
+            min_tracking_confidence=0.6
+        )
+        mp_draw = mp.solutions.drawing_utils
 
-    if not cap.isOpened():
-        st.error("❌ Cannot open video")
-        st.stop()
+        def extract_features(landmarks):
+            landmarks = np.array(landmarks)
+            base = landmarks[0]
+            landmarks = landmarks - base
 
-    # -----------------------------
-    # System Status
-    # -----------------------------
-    st.markdown("---")
-    st.markdown("### ⚙️ System Status")
-    st.write("Processing frames and detecting hand landmarks...")
+            max_val = np.max(np.abs(landmarks))
+            if max_val != 0:
+                landmarks = landmarks / max_val
 
-    stframe = st.empty()
-    progress = st.progress(0)
+            return landmarks.flatten().reshape(1, -1)
 
-    gesture_counter = Counter()
-    confidence_list = []
-    window = deque(maxlen=10)
+        tfile = tempfile.NamedTemporaryFile(delete=False)
+        tfile.write(uploaded_file.read())
 
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    if total_frames <= 0:
-        total_frames = 1
+        cap = cv2.VideoCapture(tfile.name)
 
-    frame_count = 0
-    detected_frames = 0
+        if not cap.isOpened():
+            st.error("❌ Cannot open video")
+            st.stop()
 
-    # -----------------------------
-    # Live Prediction (Hero Section)
-    # -----------------------------
-    st.markdown("---")
-    st.markdown("## 🎯 Live Prediction")
-    st.caption("Real-time prediction with temporal smoothing")
+        st.markdown("### ⚙️ System Status")
+        st.write("Processing frames and detecting hand landmarks...")
 
-    prediction_box = st.empty()
+        stframe = st.empty()
+        progress = st.progress(0)
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret or frame is None:
-            break
+        gesture_counter = Counter()
+        confidence_list = []
+        window = deque(maxlen=10)
 
-        frame_count += 1
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if total_frames <= 0:
+            total_frames = 1
 
-        frame = cv2.resize(frame, (640, 480))
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = hands.process(rgb)
+        frame_count = 0
 
-        if results.multi_hand_landmarks:
-            detected_frames += 1
+        st.markdown("---")
+        st.markdown("## 🎯 Live Prediction")
 
-            hand = results.multi_hand_landmarks[0]
-            mp_draw.draw_landmarks(frame, hand, mp_hands.HAND_CONNECTIONS)
+        prediction_box = st.empty()
 
-            landmarks = [[lm.x, lm.y, lm.z] for lm in hand.landmark]
-            features = extract_features(landmarks)
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-            try:
+            frame_count += 1
+
+            frame = cv2.resize(frame, (640, 480))
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = hands.process(rgb)
+
+            if results.multi_hand_landmarks:
+
+                hand = results.multi_hand_landmarks[0]
+                mp_draw.draw_landmarks(frame, hand, mp_hands.HAND_CONNECTIONS)
+
+                landmarks = [[lm.x, lm.y, lm.z] for lm in hand.landmark]
+                features = extract_features(landmarks)
+
                 pred = model.predict(features)[0]
                 window.append(pred)
 
-                # Confidence
                 if hasattr(model, "predict_proba"):
-                    probs = model.predict_proba(features)
-                    confidence = np.max(probs)
+                    confidence = np.max(model.predict_proba(features))
                     confidence_list.append(confidence)
                 else:
                     confidence = None
 
                 stable_pred = Counter(window).most_common(1)[0][0]
 
-            except:
-                stable_pred = "Error"
-                confidence = None
+                # 🔥 HERO OUTPUT
+                prediction_box.markdown(f"# 🖐 {stable_pred}")
 
-            gesture_counter[stable_pred] += 1
+                if confidence is not None:
+                    st.metric("Confidence", f"{round(confidence*100,2)}%")
 
-            # -----------------------------
-            # HERO OUTPUT (FINAL POLISH)
-            # -----------------------------
-            prediction_box.markdown(f"# 🖐 {stable_pred}")
+                st.caption("Stable prediction across last 10 frames")
 
-            if confidence is not None:
-                st.metric("Confidence", f"{round(confidence*100,2)}%")
+            else:
+                prediction_box.markdown("## ❌ No Hand Detected")
 
-            st.caption("Stable prediction across last 10 frames")
+            stframe.image(frame, channels="BGR")
+            progress.progress(min(frame_count / total_frames, 1.0))
 
-            cv2.putText(
-                frame,
-                stable_pred,
-                (10, 40),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 255, 0),
-                2
-            )
+        cap.release()
 
-        else:
-            prediction_box.markdown("## ❌ No Hand Detected")
+        st.markdown("---")
+        st.success("✅ Processing complete")
 
-        stframe.image(frame, channels="BGR")
-        progress.progress(min(frame_count / total_frames, 1.0))
-
-    cap.release()
-
-    st.markdown("---")
-    st.success("✅ Processing complete")
-
-    # -----------------------------
-    # Final Result
-    # -----------------------------
-    st.markdown("## 🎯 Final Result")
-
-    if gesture_counter:
-        final_gesture = max(gesture_counter, key=gesture_counter.get)
-        st.markdown(f"## 🏁 Final Prediction: {final_gesture}")
-
-        if confidence_list:
-            avg_conf = np.mean(confidence_list)
-            st.write(f"Average Confidence: {round(avg_conf*100,2)}%")
-
+    # ============================================================
+    # DEMO MODE (CLOUD FALLBACK)
+    # ============================================================
     else:
-        st.error("❌ No gesture detected")
+        st.info("Demo mode: UI + pipeline only (no live detection)")
 
-    # -----------------------------
-    # Processing Details
-    # -----------------------------
-    st.markdown("---")
-    st.markdown("## 📊 Processing Details")
+        st.markdown("## 🎯 Demo Prediction")
+        st.markdown("# 🖐 Gesture Recognition Model Ready")
 
-    st.write(f"Total Frames: {frame_count}")
-    st.write(f"Frames with Hand Detected: {detected_frames}")
+        st.metric("Confidence", "N/A")
+        st.caption("Run locally for real-time predictions")
 
-    if frame_count > 0:
-        detection_rate = (detected_frames / frame_count) * 100
-        st.write(f"Detection Rate: {round(detection_rate, 2)}%")
+# ============================================================
+# FINAL RESULT SECTION
+# ============================================================
+st.markdown("---")
+st.markdown("## 🏁 Final Output")
 
-    # -----------------------------
-    # Prediction Summary
-    # -----------------------------
-    st.markdown("---")
-    st.markdown("## 📊 Prediction Summary")
-
-    for g, count in gesture_counter.items():
-        st.write(f"{g}: {count} frames")
+st.write("✔ Model loaded successfully")
+st.write("✔ System ready for inference")
