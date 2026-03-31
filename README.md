@@ -4,6 +4,14 @@
 
 ---
 
+## 🎥 Demo
+
+<p align="center">
+  <img src="results/demo.gif" width="600"/>
+</p>
+
+---
+
 ## 🚀 Key Highlights
 
 - 📊 Evaluated across **12 sessions, 5 users, and ~22,000 frames**
@@ -12,14 +20,6 @@
 - 📉 Includes **confusion matrix and failure analysis**
 - 🧪 Explicitly avoids **data leakage using session-based validation**
 - 🎯 Focused on **robustness, not just accuracy**
-
----
-
-## 🎥 Demo
-
-<p align="center">
-  <img src="results/demo.gif" width="600"/>
-</p>
 
 ---
 
@@ -45,9 +45,8 @@
 ### ⚠️ Known Limitations
 - Reduced accuracy in low lighting  
 - Confusion between similar gestures (open vs four)  
-- Sensitive to hand distance and visibility  
-
-💡 This app demonstrates how the model behaves under **real-world conditions**, not just controlled environments.
+- Sensitive to hand distance and visibility
+- 💡 This app demonstrates how the model behaves under **real-world conditions**, not just controlled environments.
 
 <p align="center">
   <img src="results/streamlit_ui.png" width="700"/>
@@ -55,13 +54,39 @@
 
 ---
 
+## 🧠 System Architecture
+Video → MediaPipe → Landmarks → Feature Engineering → Model → Prediction
+
+---
+
+## 💡 What Makes This Project Different?
+
+Most projects:
+
+Use random train-test split
+Report inflated accuracy
+Ignore real-world deployment issues
+
+This project:
+
+✅ Uses session-based validation
+✅ Evaluates domain shift explicitly
+✅ Includes failure analysis
+✅ Focuses on generalization, not memorization
+
+👉 This reflects production-level ML thinking
+
+---
+
 ## 📌 Overview
 
-🚨 Unlike typical gesture recognition projects that rely on random train-test splits, this system uses **session-based evaluation** to simulate real-world deployment conditions.
+Unlike typical gesture recognition systems, this project evaluates performance under real-world conditions.
 
-The model is explicitly tested under **domain shifts** such as lighting variation, background clutter, distance, and user differences.
+It simulates deployment scenarios where:
 
-This project focuses on **robustness, generalization, and failure analysis**, not just high accuracy.
+> Data distributions change
+> Users vary
+> Environmental conditions are unpredictable
 
 ---
 
@@ -222,8 +247,7 @@ robust-hand-gesture-recognition/
 │ ├── confusion_matrix.png
 │ └── streamlit_ui.png
 │
-├── requirements.txt
-├── runtime.txt  
+├── requirements.txt 
 ├── README.md
 └── .gitignore
 
