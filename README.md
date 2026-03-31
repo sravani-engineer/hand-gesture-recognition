@@ -27,7 +27,7 @@
 
 🚀 An interactive web application is available to test the model in real time.
 
-👉 **Live App:** https://your-app-name.streamlit.app  
+👉 **Live App:** https://robust-hand-gesture-recognition-fwvdrm66ujac9ub2yz2vpd.streamlit.app/
 
 ### 🖥️ Features
 - Real-time gesture prediction from uploaded videos  
