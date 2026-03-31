@@ -6,14 +6,18 @@ import tempfile
 from collections import Counter, deque
 
 # -----------------------------
-# SAFE IMPORT (CRITICAL FIX)
+# SAFE IMPORT (FIXED)
 # -----------------------------
 try:
     import mediapipe as mp
     mp_hands = mp.solutions.hands
+    mp_draw = mp.solutions.drawing_utils
     USE_MEDIAPIPE = True
-except:
+except Exception as e:
     USE_MEDIAPIPE = False
+
+# DEBUG (IMPORTANT)
+st.write("MediaPipe Available:", USE_MEDIAPIPE)
 
 # -----------------------------
 # Page Config
@@ -36,23 +40,22 @@ with col2:
 st.markdown("---")
 
 # -----------------------------
-# Cloud Warning (IMPORTANT)
+# Cloud Warning
 # -----------------------------
 if not USE_MEDIAPIPE:
     st.warning("""
 ⚠️ Live hand detection is disabled in this cloud deployment.
 
 Reason:
-MediaPipe is not supported in this environment (Python 3.14).
+MediaPipe is not supported in this environment.
 
-👉 To test full real-time gesture detection:
-Run this app locally.
+👉 Run locally for full functionality.
 """)
 
 # -----------------------------
-# Robustness Highlight
+# Info
 # -----------------------------
-st.info("⚠️ This model is tested under real-world variations: lighting, background, and user differences.")
+st.info("⚠️ Tested under real-world variations: lighting, background, and user differences.")
 
 # -----------------------------
 # Sidebar
@@ -62,7 +65,7 @@ st.sidebar.write("""
 - 22K frames dataset  
 - 12 sessions  
 - 5 users  
-- Tested under domain shift  
+- Domain shift tested  
 """)
 
 st.sidebar.warning("""
@@ -79,29 +82,25 @@ st.markdown("## 🎮 Instructions")
 st.info("""
 1. Upload a gesture video  
 2. Ensure hand is clearly visible  
-3. Try different lighting conditions  
+3. Try different lighting  
 4. Test different backgrounds  
 """)
 
 st.markdown("---")
 
 # -----------------------------
-# System Design (BIG BOOST)
+# System Design
 # -----------------------------
 st.markdown("## 🧠 System Design")
-st.code("""
-Video → MediaPipe → Landmarks → Model → Prediction
-""")
+st.code("Video → MediaPipe → Landmarks → Model → Prediction")
 
 st.markdown("---")
 
 # -----------------------------
-# Load Model (MUST WORK)
+# Load Model
 # -----------------------------
-MODEL_PATH = "models/gesture_model.pkl"
-
 try:
-    model = joblib.load(MODEL_PATH)
+    model = joblib.load("models/gesture_model.pkl")
 except:
     st.error("❌ Model not found!")
     st.stop()
@@ -112,10 +111,13 @@ except:
 uploaded_file = st.file_uploader("📤 Upload Gesture Video", type=["mp4", "avi", "mov"])
 
 # ============================================================
-# FULL PIPELINE (ONLY IF MEDIAPIPE AVAILABLE)
+# MAIN LOGIC
 # ============================================================
 if uploaded_file is not None:
 
+    # ============================================================
+    # FULL PIPELINE (ONLY IF MEDIAPIPE WORKS)
+    # ============================================================
     if USE_MEDIAPIPE:
 
         hands = mp_hands.Hands(
@@ -123,7 +125,6 @@ if uploaded_file is not None:
             min_detection_confidence=0.7,
             min_tracking_confidence=0.6
         )
-        mp_draw = mp.solutions.drawing_utils
 
         def extract_features(landmarks):
             landmarks = np.array(landmarks)
@@ -146,13 +147,11 @@ if uploaded_file is not None:
             st.stop()
 
         st.markdown("### ⚙️ System Status")
-        st.write("Processing frames and detecting hand landmarks...")
+        st.write("Processing frames...")
 
         stframe = st.empty()
         progress = st.progress(0)
 
-        gesture_counter = Counter()
-        confidence_list = []
         window = deque(maxlen=10)
 
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -188,20 +187,10 @@ if uploaded_file is not None:
                 pred = model.predict(features)[0]
                 window.append(pred)
 
-                if hasattr(model, "predict_proba"):
-                    confidence = np.max(model.predict_proba(features))
-                    confidence_list.append(confidence)
-                else:
-                    confidence = None
-
                 stable_pred = Counter(window).most_common(1)[0][0]
 
-                # 🔥 HERO OUTPUT
+                # HERO OUTPUT
                 prediction_box.markdown(f"# 🖐 {stable_pred}")
-
-                if confidence is not None:
-                    st.metric("Confidence", f"{round(confidence*100,2)}%")
-
                 st.caption("Stable prediction across last 10 frames")
 
             else:
@@ -211,27 +200,23 @@ if uploaded_file is not None:
             progress.progress(min(frame_count / total_frames, 1.0))
 
         cap.release()
-
-        st.markdown("---")
         st.success("✅ Processing complete")
 
     # ============================================================
-    # DEMO MODE (CLOUD FALLBACK)
+    # FALLBACK MODE
     # ============================================================
     else:
-        st.info("Demo mode: UI + pipeline only (no live detection)")
+        st.info("Demo mode: MediaPipe not available")
 
-        st.markdown("## 🎯 Demo Prediction")
-        st.markdown("# 🖐 Gesture Recognition Model Ready")
+        st.markdown("## 🎯 Demo Output")
+        st.markdown("# 🖐 Gesture Model Ready")
+        st.caption("Run locally for full detection")
 
-        st.metric("Confidence", "N/A")
-        st.caption("Run locally for real-time predictions")
-
-# ============================================================
-# FINAL RESULT SECTION
-# ============================================================
+# -----------------------------
+# Final Section
+# -----------------------------
 st.markdown("---")
 st.markdown("## 🏁 Final Output")
 
-st.write("✔ Model loaded successfully")
-st.write("✔ System ready for inference")
+st.write("✔ Model loaded")
+st.write("✔ App running")
