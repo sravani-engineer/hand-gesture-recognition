@@ -35,7 +35,7 @@ Due to MediaPipe limitations in cloud environments:
 - ✅ Full real-time system works locally
    
 ### ▶️ Run Locally
-bash
+```bash
 streamlit run streamlit_app.py
 
 ---
@@ -112,7 +112,7 @@ Most gesture recognition systems perform well in controlled environments but fai
 - Distance changes  
 - Different users and hand variations  
 
-👉 This project evaluates how well a model performs under these real-world challenges.
+👉 This project evaluates performance under these challenges.
 
 ---
 
@@ -135,7 +135,6 @@ Most gesture recognition systems perform well in controlled environments but fai
 
 ### Data Collection Strategy
 
-The dataset was intentionally collected across multiple sessions to introduce real-world variability:
 
 - Backgrounds: plain and cluttered indoor environments  
 - Lighting Conditions: bright, dim, and natural light  
@@ -145,19 +144,6 @@ The dataset was intentionally collected across multiple sessions to introduce re
 ### Objective
 
 The dataset is designed to evaluate gesture recognition performance under **real-world conditions**, rather than controlled environments.
-
----
-
-## 📊 Dataset Strengths & Limitations
-
-### Strengths
-- Multi-user dataset improves **potential for generalization across users**  
-- Environmental diversity (lighting + background)  
-- Large sample size (~22K frames)  
-
-### Limitations
-- Limited to static gestures  
-- No temporal modeling of dynamic gestures  
 
 ---
 
@@ -176,7 +162,6 @@ This ensures performance reflects **true generalization**, not memorization.
 
 ## 📊 Results
 
-### Overall Performance
 - Overall Accuracy: **~93–94%**
 
 ### Robustness Evaluation
@@ -198,10 +183,10 @@ This ensures performance reflects **true generalization**, not memorization.
 
 ## 🧠 Key Insights
 
-- Session-based evaluation reveals performance gaps hidden by random splits  
-- Landmark-based features are sensitive to lighting and distance variations  
-- Similar gestures (open vs four) lead to misclassification due to feature similarity  
-- Model generalizes across users but degrades under challenging conditions  
+- Random splits hide real-world failures
+- Landmarks sensitive to lighting & distance
+- Open vs four → major confusion
+- Generalizes across users but degrades in tough conditions
 
 ---
 
