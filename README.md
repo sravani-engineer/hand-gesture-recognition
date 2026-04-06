@@ -1,10 +1,10 @@
 # 🖐️ Hand Gesture Recognition with Cross-Condition Robustness Evaluation
 
-> A hand gesture recognition system explicitly evaluated under real-world domain shifts using session-based validation.
-
+> ⚠️ Most gesture recognition projects report ~99% accuracy in controlled settings.  
+> This project shows what actually happens in the real world.
 ---
 
-## 🎥 Demo
+## 🎥 Demo (Real Output)
 
 <p align="center">
   <img src="results/demo.gif" width="600"/>
