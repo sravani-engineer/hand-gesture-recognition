@@ -97,9 +97,9 @@ Unlike typical gesture recognition systems, this project evaluates performance u
 
 It simulates deployment scenarios where:
 
-> Data distributions change
-> Users vary
-> Environmental conditions are unpredictable
+- Data distributions change
+- Users vary
+- Environmental conditions are unpredictable
 
 ---
 
