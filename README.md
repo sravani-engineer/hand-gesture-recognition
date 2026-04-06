@@ -29,46 +29,66 @@
 https://robust-hand-gesture-recognition-fwvdrm66ujac9ub2yz2vpd.streamlit.app/
 
 ### ⚠️ Important Note
+
 Due to MediaPipe limitations in cloud environments:
 
 - ❌ Live hand tracking may be disabled  
-- ✅ Full real-time system works locally
-   
+- ✅ Full real-time system works locally  
+
 ### ▶️ Run Locally
-``bash
+
+```bash
 streamlit run streamlit_app.py
+```
 
 ---
 
 ## 🖥️ Interface Preview
-<p align="center"> <img src="results/streamlit_ui_1.png" width="700"/> </p> <p align="center"> <img src="results/streamlit_ui_2.png" width="700"/> </p>
+
+<p align="center">
+  <img src="results/streamlit_ui_1.png" width="700"/>
+</p>
+
+<p align="center">
+  <img src="results/streamlit_ui_2.png" width="700"/>
+</p>
 
 ---
 
-### 🖥️ App Capabilities
-Real-time gesture prediction from videos
-Confidence scoring
-Temporal smoothing for stable predictions
-Hand landmark visualization
-Processing metrics (frame count, detection rate)
+## 🖥️ App Capabilities
 
-### 🎯 Test Scenarios
-Lighting variation
-Background clutter
-Distance from camera
-Gesture stability
+- Real-time gesture prediction from videos  
+- Confidence scoring  
+- Temporal smoothing for stable predictions  
+- Hand landmark visualization  
+- Processing metrics (frame count, detection rate)  
 
-### ⚠️ Limitations
-Lower accuracy in low light
-Confusion: open vs four
-Sensitive to hand distance
+---
+
+## 🎯 Test Scenarios
+
+- Lighting variation  
+- Background clutter  
+- Distance from camera  
+- Gesture stability  
+
+---
+
+## ⚠️ Limitations
+
+- Lower accuracy in low light  
+- Confusion: open vs four  
+- Sensitive to hand distance  
 
 💡 Designed to expose real-world behavior, not just ideal performance.
 
 ---
 
 ## 🧠 System Architecture
+
+```
 Video → MediaPipe → Landmarks → Feature Engineering → Model → Prediction
+```
 
 ---
 
@@ -76,16 +96,16 @@ Video → MediaPipe → Landmarks → Feature Engineering → Model → Predicti
 
 Most projects:
 
-Use random train-test split
-Report inflated accuracy
-Ignore real-world deployment issues
+- Use random train-test split  
+- Report inflated accuracy  
+- Ignore real-world deployment issues  
 
 This project:
 
-✅ Uses session-based validation
-✅ Evaluates domain shift explicitly
-✅ Includes failure analysis
-✅ Focuses on generalization, not memorization
+- ✅ Uses session-based validation  
+- ✅ Evaluates domain shift explicitly  
+- ✅ Includes failure analysis  
+- ✅ Focuses on generalization, not memorization  
 
 👉 This reflects production-level ML thinking
 
@@ -97,9 +117,9 @@ Unlike typical gesture recognition systems, this project evaluates performance u
 
 It simulates deployment scenarios where:
 
-- Data distributions change
-- Users vary
-- Environmental conditions are unpredictable
+- Data distributions change  
+- Users vary  
+- Environmental conditions are unpredictable  
 
 ---
 
@@ -128,13 +148,12 @@ Most gesture recognition systems perform well in controlled environments but fai
 
 ## 📦 Dataset Design
 
-- Total Sessions: **12**
-- Users: **5 individuals**
-- Gestures: **5 static classes (fist, open, index, four, small)**
+- Total Sessions: **12**  
+- Users: **5 individuals**  
+- Gestures: **5 static classes (fist, open, index, four, small)**  
 - Total Samples: **~22,000 frames**
 
 ### Data Collection Strategy
-
 
 - Backgrounds: plain and cluttered indoor environments  
 - Lighting Conditions: bright, dim, and natural light  
@@ -151,10 +170,10 @@ The dataset is designed to evaluate gesture recognition performance under **real
 
 🚨 Instead of random train-test splits, this project uses **session-based splitting**:
 
-- Train and test data come from **different sessions**
-- Prevents **data leakage**
-- Simulates **real-world deployment scenarios**
-- Captures **domain shift across environments**
+- Train and test data come from **different sessions**  
+- Prevents **data leakage**  
+- Simulates **real-world deployment scenarios**  
+- Captures **domain shift across environments**  
 
 This ensures performance reflects **true generalization**, not memorization.
 
@@ -175,6 +194,7 @@ This ensures performance reflects **true generalization**, not memorization.
 📉 **Performance Drop:** ~12% under real-world conditions
 
 ### Summary Statistics
+
 - Minimum Accuracy: **0.8842**  
 - Maximum Accuracy: **1.0000**  
 - Average Accuracy: **0.9614**
@@ -183,10 +203,10 @@ This ensures performance reflects **true generalization**, not memorization.
 
 ## 🧠 Key Insights
 
-- Random splits hide real-world failures
-- Landmarks sensitive to lighting & distance
-- Open vs four → major confusion
-- Generalizes across users but degrades in tough conditions
+- Random splits hide real-world failures  
+- Landmarks sensitive to lighting & distance  
+- Open vs four → major confusion  
+- Generalizes across users but degrades in tough conditions  
 
 ---
 
@@ -222,6 +242,8 @@ It demonstrates:
 ---
 
 ## 📂 Project Structure
+
+```
 robust-hand-gesture-recognition/
 │
 ├── .streamlit/
@@ -229,25 +251,27 @@ robust-hand-gesture-recognition/
 │
 ├── streamlit_app.py
 ├── models/
-│ └── gesture_model.pkl
+│   └── gesture_model.pkl
 │
 ├── src/
-│ ├── extract_landmarks.py
-│ ├── preprocess.py
-│ ├── train_model.py
-│ ├── evaluate.py
-│ ├── evaluate_conditions.py
-│ ├── realtime_inference.py
-│ └── test_hand_detection.py
+│   ├── extract_landmarks.py
+│   ├── preprocess.py
+│   ├── train_model.py
+│   ├── evaluate.py
+│   ├── evaluate_conditions.py
+│   ├── realtime_inference.py
+│   └── test_hand_detection.py
 │
 ├── results/
-│ ├── demo.gif
-│ ├── confusion_matrix.png
-│ └── streamlit_ui.png
+│   ├── demo.gif
+│   ├── confusion_matrix.png
+│   ├── streamlit_ui_1.png
+│   └── streamlit_ui_2.png
 │
-├── requirements.txt 
+├── requirements.txt  
 ├── README.md
 └── .gitignore
+```
 
 ---
 
@@ -255,22 +279,36 @@ robust-hand-gesture-recognition/
 
 ### 1. Clone repository
 
-``bash
+```bash
 git clone https://github.com/sravani-engineer/robust-hand-gesture-recognition.git
 cd robust-hand-gesture-recognition
+```
+
 ### 2. Create virtual environment
+
+```bash
 python -m venv venv
 venv\Scripts\activate
+```
+
 ### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
 ### 4. Run Streamlit App
+
+```bash
 streamlit run streamlit_app.py
+```
 
 ---
 
 ## 🔄 Pipeline
 
+```
 Video Input → Landmark Extraction → Preprocessing → Model Training → Evaluation → Real-time Inference
-
+```
 
 ---
