@@ -45,7 +45,7 @@ streamlit run streamlit_app.py
 
 ---
 
-## 🖥️ App Capabilities
+### 🖥️ App Capabilities
 Real-time gesture prediction from videos
 Confidence scoring
 Temporal smoothing for stable predictions
