@@ -35,7 +35,7 @@ Due to MediaPipe limitations in cloud environments:
 - ✅ Full real-time system works locally
    
 ### ▶️ Run Locally
-```bash
+``bash
 streamlit run streamlit_app.py
 
 ---
@@ -255,7 +255,7 @@ robust-hand-gesture-recognition/
 
 ### 1. Clone repository
 
-```bash
+``bash
 git clone https://github.com/sravani-engineer/robust-hand-gesture-recognition.git
 cd robust-hand-gesture-recognition
 ### 2. Create virtual environment
@@ -266,7 +266,9 @@ pip install -r requirements.txt
 ### 4. Run Streamlit App
 streamlit run streamlit_app.py
 
-🔄 Pipeline
+---
+
+## 🔄 Pipeline
 
 Video Input → Landmark Extraction → Preprocessing → Model Training → Evaluation → Real-time Inference
 
