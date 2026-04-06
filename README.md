@@ -2,6 +2,7 @@
 
 > ⚠️ Most gesture recognition projects report ~99% accuracy in controlled settings.  
 > This project shows what actually happens in the real world.
+
 ---
 
 ## 🎥 Demo (Real Output)
@@ -14,43 +15,51 @@
 
 ## 🚀 Key Highlights
 
-- 📊 Evaluated across **12 sessions, 5 users, and ~22,000 frames**
-- 🔬 Uses **session-based splitting** to simulate real-world deployment
-- ⚠️ Demonstrates **performance drop under domain shift (100% → 88%)**
-- 📉 Includes **confusion matrix and failure analysis**
-- 🧪 Explicitly avoids **data leakage using session-based validation**
-- 🎯 Focused on **robustness, not just accuracy**
+- 📊 Evaluated across **12 sessions, 5 users, ~22,000 frames**
+- 🔬 Uses **session-based validation (no data leakage)**
+- ⚠️ Shows **real-world performance drop (100% → 88%)**
+- 📉 Includes **confusion matrix + failure analysis**
+- 🎯 Focused on **robustness, not inflated accuracy**
 
 ---
 
 ## 🌐 Live Demo (Streamlit App)
 
-🚀 An interactive web application is available to test the model in real time.
+👉 **Live App:**  
+https://robust-hand-gesture-recognition-fwvdrm66ujac9ub2yz2vpd.streamlit.app/
 
-👉 **Live App:** https://robust-hand-gesture-recognition-fwvdrm66ujac9ub2yz2vpd.streamlit.app/
+### ⚠️ Important Note
+Due to MediaPipe limitations in cloud environments:
 
-### 🖥️ Features
-- Real-time gesture prediction from uploaded videos  
-- Confidence score for each prediction  
-- Temporal smoothing for stable predictions  
-- Visual hand landmark detection using MediaPipe  
-- Displays processing statistics (frame count, detection rate)  
+- ❌ Live hand tracking may be disabled  
+- ✅ Full real-time system works locally
+   
+### ▶️ Run Locally
+bash
+streamlit run streamlit_app.py
 
-### 🎯 What You Can Test
-- Different lighting conditions  
-- Background variations  
-- Distance from camera  
-- Gesture stability across frames  
+### 🖥️ Interface Preview
+<p align="center"> <img src="results/streamlit_ui_1.png" width="700"/> </p> <p align="center"> <img src="results/streamlit_ui_2.png" width="700"/> </p>
 
-### ⚠️ Known Limitations
-- Reduced accuracy in low lighting  
-- Confusion between similar gestures (open vs four)  
-- Sensitive to hand distance and visibility
-- 💡 This app demonstrates how the model behaves under **real-world conditions**, not just controlled environments.
+### 🖥️ App Capabilities
+Real-time gesture prediction from videos
+Confidence scoring
+Temporal smoothing for stable predictions
+Hand landmark visualization
+Processing metrics (frame count, detection rate)
 
-<p align="center">
-  <img src="results/streamlit_ui.png" width="700"/>
-</p>
+### 🎯 Test Scenarios
+Lighting variation
+Background clutter
+Distance from camera
+Gesture stability
+
+### ⚠️ Limitations
+Lower accuracy in low light
+Confusion: open vs four
+Sensitive to hand distance
+
+💡 Designed to expose real-world behavior, not just ideal performance.
 
 ---
 
