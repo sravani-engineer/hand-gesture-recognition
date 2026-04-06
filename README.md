@@ -38,10 +38,14 @@ Due to MediaPipe limitations in cloud environments:
 bash
 streamlit run streamlit_app.py
 
-### 🖥️ Interface Preview
+---
+
+## 🖥️ Interface Preview
 <p align="center"> <img src="results/streamlit_ui_1.png" width="700"/> </p> <p align="center"> <img src="results/streamlit_ui_2.png" width="700"/> </p>
 
-### 🖥️ App Capabilities
+---
+
+## 🖥️ App Capabilities
 Real-time gesture prediction from videos
 Confidence scoring
 Temporal smoothing for stable predictions
