@@ -1,4 +1,4 @@
-# 🖐️ Hand Gesture Recognition — Failure Analysis Under Real-World Conditions 
+# 🖐️ Hand Gesture Recognition — Failure Analysis of Model Performance Under Real-World Conditions
 > Most gesture recognition systems report near-perfect accuracy.
 > They break the moment you change the user, lighting, or background.
 
