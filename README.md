@@ -1,7 +1,8 @@
-# 🖐️ Hand Gesture Recognition with Cross-Condition Robustness Evaluation
+# 🖐️ Hand Gesture Recognition — Failure Analysis Under Real-World Conditions 
+> Most gesture recognition systems report near-perfect accuracy.
+> They break the moment you change the user, lighting, or background.
 
-> ⚠️ Most gesture recognition projects report ~99% accuracy in controlled settings.  
-> This project shows what actually happens in the real world.
+This project measures that failure — and explains why it happens.
 
 ---
 
@@ -15,11 +16,19 @@
 
 ## 🚀 Key Highlights
 
-- 📊 Evaluated across **12 sessions, 5 users, ~22,000 frames**
-- 🔬 Uses **session-based validation (no data leakage)**
-- ⚠️ Shows **real-world performance drop (100% → 88%)**
-- 📉 Includes **confusion matrix + failure analysis**
-- 🎯 Focused on **robustness, not inflated accuracy**
+- 📊 Evaluated across **12 sessions, 5 users, ~22K frames**
+- 🔬 Designed **session-based validation** to prevent data leakage
+- 📉 Quantified **real-world performance drop (100% → 88.4%)**
+- ⚠️ Identified **failure modes under domain shift**
+- 🎯 Focused on **generalization, not inflated accuracy**
+  
+---
+
+## 🧠 Core Idea 
+
+Instead of asking "How accurate is the model?", this project asks: 
+
+**"When and why does the model fail?"**
 
 ---
 
@@ -65,18 +74,18 @@ streamlit run streamlit_app.py
 
 ---
 
-## 🎯 Test Scenarios
+## 🎯 🧪 Evaluation Conditions 
 
-- Lighting variation  
-- Background clutter  
-- Distance from camera  
-- Gesture stability  
-
+- Lighting variation (bright, dim, natural)
+- Background clutter (clean vs complex)
+- Distance from camera (near vs far)
+- User variation (different hand shapes)
+  
 ---
 
 ## ⚠️ Limitations
 
-- Lower accuracy in low light  
+- Minor performance drop in low light conditions 
 - Confusion: open vs four  
 - Sensitive to hand distance  
 
@@ -107,19 +116,7 @@ This project:
 - ✅ Includes failure analysis  
 - ✅ Focuses on generalization, not memorization  
 
-👉 This reflects production-level ML thinking
-
----
-
-## 📌 Overview
-
-Unlike typical gesture recognition systems, this project evaluates performance under real-world conditions.
-
-It simulates deployment scenarios where:
-
-- Data distributions change  
-- Users vary  
-- Environmental conditions are unpredictable  
+👉 This reflects how ML systems behave in real-world deployment, not ideal conditions.
 
 ---
 
@@ -193,6 +190,18 @@ This ensures performance reflects **true generalization**, not memorization.
 
 📉 **Performance Drop:** ~12% under real-world conditions
 
+### 🔬 Condition-wise Impact (Observed) 
+
+| Factor | Impact on Accuracy | 
+|------------------------------------|------------------| 
+| Similar Gestures (open vs four) | ↓ major drop | 
+| Small vs Fist Confusion | ↓ occasional drop | 
+| Distance from Camera | ↓ moderate drop | 
+| Lighting Variation | ↓ minor impact | 
+| Background Clutter | ↓ minimal impact | 
+
+👉 The primary limitation arises from gesture similarity rather than environmental variation.
+
 ### Summary Statistics
 
 - Minimum Accuracy: **0.8842**  
@@ -203,10 +212,12 @@ This ensures performance reflects **true generalization**, not memorization.
 
 ## 🧠 Key Insights
 
-- Random splits hide real-world failures  
-- Landmarks sensitive to lighting & distance  
-- Open vs four → major confusion  
-- Generalizes across users but degrades in tough conditions  
+- Model performance is primarily limited by gesture similarity (open vs four)
+- Feature representation struggles to separate similar finger configurations
+- Lighting and background have less impact than expected
+- Distance affects landmark precision moderately
+- Random splits hide gesture-level confusion patterns
+- Model limitations are driven more by feature ambiguity than environmental noise
 
 ---
 
@@ -223,15 +234,28 @@ This ensures performance reflects **true generalization**, not memorization.
 - Confusion between **open** and **four** due to similar finger configurations  
 - Reduced landmark stability in **low lighting conditions**  
 - Performance degradation when hand occupies **smaller region of frame**  
-- Sensitivity to **partial occlusions and motion blur**  
+- Sensitivity to **partial occlusions and motion blur**
+- Major errors are caused by intrinsic gesture similarity rather than environmental noise  
 
 ---
 
+## ⚠️ Failure Examples (Visual) 
+
+<p align="center"> 
+  <img src="results/failure_open_vs_four.png" width="400"/> 
+  <img src="results/far_distance_failure.png" width="400"/> 
+</p> 
+
+Examples where the model struggles: 
+- Similar gestures causing misclassification
+- Reduced landmark precision at larger distances
+
+---
 ## 💼 Why This Matters
 
-This project simulates real-world ML deployment challenges where models must handle **distribution shifts**.
+This project analyzes how model performance shifts when evaluated across real-world variations rather than controlled settings.
 
-It demonstrates:
+It focuses on:
 
 - Handling **domain shift**  
 - Avoiding **data leakage**  
@@ -310,5 +334,12 @@ streamlit run streamlit_app.py
 ```
 Video Input → Landmark Extraction → Preprocessing → Model Training → Evaluation → Real-time Inference
 ```
+---
+
+## 🔥 Key Takeaway 
+
+High accuracy does not mean a reliable system. 
+
+Real-world performance depends on robustness to changing conditions — and most models fail this test. 
 
 ---
